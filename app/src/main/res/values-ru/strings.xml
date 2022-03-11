@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Список</string>
+    <string name="input_item">Введите текст</string>
+    <string name="speech_rec_unavailable">Голосовой ввод недоступен</string>
+    <string name="please_set_rec_permissions">Чтобы воспользоваться голосовым вводом,
+        пожалуйста, установите необходимые разрешения в настройках</string>
+</resources>

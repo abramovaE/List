@@ -25,12 +25,13 @@ class ListAdapter(private val listChangeListener: ListChangeListener) : Recycler
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.bind(list[position])
         holder.binding.checkBox.setOnCheckedChangeListener {
-                _, b ->
+                v, b ->
             if(b) {
+                Thread.sleep(300)
                 val string = list[position]
                 list.removeAt(position)
                 listChangeListener.onTextDelete(string)
-                holder.binding.checkBox.isChecked = !b
+                v.isChecked = !b
                 notifyDataSetChanged()
             }
         }

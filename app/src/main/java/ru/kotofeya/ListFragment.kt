@@ -1,12 +1,8 @@
 package ru.kotofeya
 
-import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.view.*
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
@@ -27,37 +23,39 @@ class ListFragment: Fragment(), ListChangeListener {
         dataModel.dataSet.observe(activity as LifecycleOwner, {
             listAdapter.updateList(it)
         })
-
-
         return binding.root
     }
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         binding.apply {
             list.layoutManager = LinearLayoutManager(this@ListFragment.context)
             list.adapter = listAdapter
-            inputItem.setOnKeyListener(View.OnKeyListener{
-                    _, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+            inputItem.setOnEditorActionListener { _, keyCode, _ ->
+                if (keyCode == EditorInfo.IME_ACTION_DONE) {
                     val newString = inputItem.text.toString()
-                    if(newString.isNotBlank()) {
+                    if (newString.isNotBlank()) {
                         val dataList = HashSet<String>()
                         dataModel.dataSet.value?.let { dataList.addAll(it) }
                         dataList.add(newString)
                         dataModel.dataSet.postValue(dataList)
                         inputItem.text.clear()
-//                        val inputManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//                        inputManager.hideSoftInputFromWindow(view.windowToken, 0)
                     }
-                    return@OnKeyListener true
+                    true
                 }
-                return@OnKeyListener false
+                false
+            }
+
+            btnRec.setOnTouchListener(View.OnTouchListener{
+                    _, event ->
+                if(event.action == MotionEvent.ACTION_DOWN){
+                    (activity as MainActivity).startRec()
+                }
+                if(event.action == MotionEvent.ACTION_UP){
+                    (activity as MainActivity).stopRec()
+                }
+                return@OnTouchListener true
             })
         }
     }
