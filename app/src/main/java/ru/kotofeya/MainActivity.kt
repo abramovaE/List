@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         sharedPreferences = getSharedPreferences("LIST_SP", Context.MODE_PRIVATE)
         loadList()
         dataModel.dataSet.observe(this, {

@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="spring_blue">#03A9F4</color>
+    <color name="spring_blue_light">#7A03A9F4</color>
+
     <color name="spring_blue_dark">#2196F3</color>
 
 </resources>
