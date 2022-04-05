@@ -6,6 +6,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.kotofeya.databinding.ListFragmentBinding
 
@@ -13,6 +14,7 @@ class ListFragment: Fragment(), ListChangeListener {
     private lateinit var binding: ListFragmentBinding
     private val dataModel: DataModel by activityViewModels()
     private val listAdapter = ListAdapter(this)
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,6 +25,12 @@ class ListFragment: Fragment(), ListChangeListener {
         dataModel.dataSet.observe(activity as LifecycleOwner, {
             listAdapter.updateList(it)
         })
+
+
+        val listItemTouchHelperCallback = ListItemTouchHelperCallback(listAdapter)
+        val itemTouchHelper = ItemTouchHelper(listItemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.list)
+
         return binding.root
     }
 

@@ -2,14 +2,15 @@ package ru.kotofeya
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.kotofeya.databinding.ListItemBinding
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ListAdapter(private val listChangeListener: ListChangeListener) :
-    RecyclerView.Adapter<ListAdapter.ListViewHolder>(){
+    RecyclerView.Adapter<ListAdapter.ListViewHolder>(), ItemTouchHelperAdapter {
 
     private val list = ArrayList<String>()
     private val TAG = this.javaClass.simpleName
@@ -31,34 +32,6 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.bind(list[position])
-
-        holder.binding.textView.setOnTouchListener(View.OnTouchListener {
-                view, motionEvent ->
-            val rawX = motionEvent.rawX
-            if(motionEvent.action == MotionEvent.ACTION_DOWN){
-                mStartingX = rawX.toInt()
-                view.isSelected = true
-            }
-
-            if(motionEvent.action == MotionEvent.ACTION_MOVE){
-                if(mStartingX - rawX > MOVE_SIZE) {
-                    Log.d(TAG, "move to left $mStartingX ${view.left} ${view.right}")
-                    val string = list[position]
-                    list.removeAt(position)
-                    listChangeListener.onTextDelete(string)
-                    view.isSelected = false
-                    notifyDataSetChanged()
-                }
-                else if(mStartingX - rawX < 0){
-                    Log.d(TAG, "move to right $mStartingX ${view.left} ${view.right}")
-                }
-            }
-            if(motionEvent.action == MotionEvent.ACTION_UP){
-                mStartingX = -1000
-                view.isSelected = false
-            }
-            return@OnTouchListener true
-        })
     }
 
     override fun getItemCount(): Int {
@@ -69,5 +42,26 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
         list.clear()
         list.addAll(set)
         notifyDataSetChanged()
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(list, i, i + 1);
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(list, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    override fun onItemDismiss(position: Int) {
+        val string = list[position]
+        list.removeAt(position)
+        listChangeListener.onTextDelete(string)
+        notifyItemRemoved(position)
     }
 }
