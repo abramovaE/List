@@ -16,6 +16,14 @@ import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import ru.kotofeya.databinding.ActivityMainBinding
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ru.kotofeya.database.AppDatabase
+import ru.kotofeya.database.ListItemEntity
 
 import java.lang.StringBuilder
 
@@ -29,6 +37,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     private val RECORD_AUDIO_REQUEST_CODE = 1
     private val TAG = "MainActivity"
     private var hasRecordPermission = false
+    private var db: AppDatabase? = null
 
     private lateinit var speechRecognizer: SpeechRecognizer
 
@@ -36,6 +45,8 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        db = AppDatabase.getAppDataBase(this)
 
         sharedPreferences = getSharedPreferences("LIST_SP", Context.MODE_PRIVATE)
         loadList()
@@ -77,18 +88,38 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     }
 
     private fun requestPermission() {
-
         ActivityCompat.requestPermissions(
             this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST_CODE)
     }
 
     private fun loadList() {
-        val set = sharedPreferences.getStringSet(SP_STRINGS, HashSet<String>())
-        dataModel.dataSet.postValue(set)
+        val handler = CoroutineExceptionHandler { _, exception ->
+            println("CoroutineExceptionHandler got $exception")
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            var dbSet = db?.listItemEntityDao()?.getAllListItemEntities()
+            var set = sharedPreferences.getStringSet(SP_STRINGS, HashSet<String>())
+
+            if(dbSet.isNullOrEmpty()){
+                set?.forEach{saveListItemEntity(it)}
+            } else{
+                dbSet.forEach({set?.add(it.value)})
+            }
+            dataModel.dataSet.postValue(set)
+        }
+    }
+
+    private fun saveListItemEntity(entityName: String){
+        val listItemEntity = ListItemEntity(value = entityName, listId = 0)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            db?.listItemEntityDao()?.insertListItemEntity(listItemEntity)
+        }
     }
 
     private fun saveList(set: Set<String>){
-        sharedPreferences.edit().putStringSet(SP_STRINGS, set).apply()
+//        sharedPreferences.edit().putStringSet(SP_STRINGS, set).apply()
+        set.forEach({saveListItemEntity(it)})
     }
 
     override fun onReadyForSpeech(p0: Bundle?) {
@@ -157,3 +188,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         }
     }
 }
+
+
+
+//пилон 07.03, 09.03, 11.03, 16.03, 23.03, 25.03
