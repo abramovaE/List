@@ -6,8 +6,4 @@ import androidx.room.PrimaryKey
 @Entity
 data class ListItemEntity(@PrimaryKey(autoGenerate = true) val id: Int? = null,
                                                       val listId: Int,
-                                                      val value: String){
-
-
-
-}
+                                                      val value: String)

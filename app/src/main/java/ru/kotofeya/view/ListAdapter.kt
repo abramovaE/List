@@ -1,10 +1,12 @@
-package ru.kotofeya
+package ru.kotofeya.view
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ru.kotofeya.R
+import ru.kotofeya.database.ListItemEntity
 import ru.kotofeya.databinding.ListItemBinding
 import java.util.*
 import kotlin.collections.ArrayList
@@ -15,14 +17,18 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
     private val list = ArrayList<String>()
     private val TAG = this.javaClass.simpleName
 
-    private val MOVE_SIZE = 80
-    private var mStartingX = -1000
-
-    class ListViewHolder(item: View): RecyclerView.ViewHolder(item) {
+    class ListViewHolder(item: View): RecyclerView.ViewHolder(item), ItemTouchHelperHolder {
         val binding = ListItemBinding.bind(item)
         fun bind(text: String) = with(binding){
             textView.text = text
         }
+        override fun onItemSelected() {
+            binding.root.isSelected = true
+        }
+        override fun onItemClear() {
+            binding.root.isSelected = false
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
@@ -38,13 +44,15 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
         return list.size
     }
 
-    fun updateList(set: Set<String>){
+    fun updateList(listItemEntity:  List<ListItemEntity>){
+        Log.d(TAG, "updateList: " + listItemEntity.size)
         list.clear()
-        list.addAll(set)
+        listItemEntity.forEach({list.add(it.value)})
         notifyDataSetChanged()
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+        Log.d(TAG, "onItemMove")
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
                 Collections.swap(list, i, i + 1);

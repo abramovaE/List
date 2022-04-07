@@ -1,8 +1,6 @@
 package ru.kotofeya.database
 
 import androidx.room.*
-import com.google.android.material.circularreveal.CircularRevealHelper
-
 
 @Dao
 interface ListEntityDao {

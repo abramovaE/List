@@ -1,4 +1,4 @@
-package ru.kotofeya
+package ru.kotofeya.view
 
 interface ItemTouchHelperAdapter {
     fun onItemMove(fromPosition: Int, toPosition: Int): Boolean

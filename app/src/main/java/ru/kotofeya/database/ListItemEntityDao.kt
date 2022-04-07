@@ -16,4 +16,8 @@ interface ListItemEntityDao {
 
     @Query("SELECT * FROM listitementity")
     fun getAllListItemEntities(): List<ListItemEntity>
+
+
+    @Query("DELETE FROM listitementity WHERE value=:name")
+    fun deleteListItemEntityByName(name: String)
 }
