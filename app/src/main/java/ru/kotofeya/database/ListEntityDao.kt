@@ -13,6 +13,6 @@ interface ListEntityDao {
 
 
     @Query("SELECT * FROM listentity")
-    fun getAllListEntities(): List<ListEntity>;
+    fun getAllListEntities(): List<ListEntity>
 
 }

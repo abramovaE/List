@@ -19,4 +19,8 @@ class Repository(appContext: Context) {
     suspend fun insertListItemEntity(listItemEntity: ListItemEntity) = withContext(Dispatchers.IO){
         db?.listItemEntityDao()?.insertListItemEntity(listItemEntity)
     }
+
+    suspend fun addNewList(listEntity: ListEntity) = withContext(Dispatchers.IO){
+        db?.listEntityDao()?.insertListEntity(listEntity)
+    }
 }

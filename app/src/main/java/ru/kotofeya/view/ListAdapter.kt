@@ -1,6 +1,5 @@
 package ru.kotofeya.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +14,9 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
     RecyclerView.Adapter<ListAdapter.ListViewHolder>(), ItemTouchHelperAdapter {
 
     private val list = ArrayList<String>()
-    private val TAG = this.javaClass.simpleName
 
     class ListViewHolder(item: View): RecyclerView.ViewHolder(item), ItemTouchHelperHolder {
-        val binding = ListItemBinding.bind(item)
+        private val binding = ListItemBinding.bind(item)
         fun bind(text: String) = with(binding){
             textView.text = text
         }
@@ -28,7 +26,6 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
         override fun onItemClear() {
             binding.root.isSelected = false
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
@@ -45,25 +42,23 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
     }
 
     fun updateList(listItemEntity:  List<ListItemEntity>){
-        Log.d(TAG, "updateList: " + listItemEntity.size)
         list.clear()
-        listItemEntity.forEach({list.add(it.value)})
+        listItemEntity.forEach { list.add(it.value) }
         notifyDataSetChanged()
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        Log.d(TAG, "onItemMove")
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
-                Collections.swap(list, i, i + 1);
+                Collections.swap(list, i, i + 1)
             }
         } else {
             for (i in fromPosition downTo toPosition + 1) {
-                Collections.swap(list, i, i - 1);
+                Collections.swap(list, i, i - 1)
             }
         }
-        notifyItemMoved(fromPosition, toPosition);
-        return true;
+        notifyItemMoved(fromPosition, toPosition)
+        return true
     }
 
     override fun onItemDismiss(position: Int) {

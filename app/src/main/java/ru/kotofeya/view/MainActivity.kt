@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var dataModel: DataModel
     private val RECORD_AUDIO_REQUEST_CODE = 1
-    private val TAG = "MainActivity"
+    private val TAG = this.javaClass.simpleName
     private var hasRecordPermission = false
 
     private lateinit var speechRecognizer: SpeechRecognizer
@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         speechRecognizer.setRecognitionListener(this)
     }
+
+
 
     fun startRec(){
         checkPermission()
@@ -71,7 +73,8 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
 
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
-            this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST_CODE)
+            this, arrayOf(Manifest.permission.RECORD_AUDIO),
+            RECORD_AUDIO_REQUEST_CODE)
     }
 
     override fun onReadyForSpeech(p0: Bundle?) {

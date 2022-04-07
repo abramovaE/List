@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.kotofeya.database.ListEntity
 import ru.kotofeya.database.ListItemEntity
 import ru.kotofeya.database.Repository
 
@@ -33,12 +34,20 @@ open class DataModel(private val repo: Repository): ViewModel() {
     }
 
     fun load(){
-        var listItemEntitiesList = emptyList<ListItemEntity>()
+        var listItemEntitiesList: List<ListItemEntity>
         viewModelScope.launch(handler){
             withContext(Dispatchers.IO){
                 listItemEntitiesList = repo.getAllListItemEntities()
             }
             listItemEntities.postValue(listItemEntitiesList)
+        }
+    }
+
+    fun addNewList(listEntity: ListEntity){
+        viewModelScope.launch(handler){
+            withContext(Dispatchers.IO){
+                repo.addNewList(listEntity)
+            }
         }
     }
 
@@ -52,7 +61,7 @@ open class DataModel(private val repo: Repository): ViewModel() {
         if(listItemEntities.value == null){
             listItemEntities.value = emptyList()
         }
-        var list = listItemEntities.value?.toMutableList()
+        val list = listItemEntities.value?.toMutableList()
         list?.add(listItemEntity)
         listItemEntities.postValue(list!!)
     }

@@ -1,13 +1,19 @@
 package ru.kotofeya.view
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import ru.kotofeya.R
+import ru.kotofeya.database.ListEntity
 import ru.kotofeya.database.ListItemEntity
 import ru.kotofeya.databinding.ListFragmentBinding
 import ru.kotofeya.viewModel.DataModel
@@ -66,6 +72,34 @@ class ListFragment: Fragment(), ListChangeListener {
                 }
                 return@OnTouchListener true
             })
+
+
+//            btnNewList.setOnClickListener(View.OnClickListener { v ->
+//                var alertDialog = AlertDialog.Builder(context)
+//                    .setPositiveButton()
+//                    .create()
+//                    .show()
+//            })
+        }
+    }
+
+
+    private fun showDialog(title: String) {
+        val dialog = context?.let {
+            Dialog(it)
+        }
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.setCancelable(false)
+        dialog?.setContentView(R.layout.add_new_list_dialog)
+        val text = dialog?.findViewById(R.id.text) as EditText
+        val btnOk = dialog?.findViewById(R.id.btn_ok) as Button
+        val btnCancel = dialog?.findViewById(R.id.btn_cancel) as Button
+        btnOk.setOnClickListener{
+            var newList = ListEntity(name = text.text.toString())
+            dataModel.addNewList(newList)
+        }
+        btnCancel.setOnClickListener{
+            dialog.dismiss()
         }
     }
 

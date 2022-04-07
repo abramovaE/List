@@ -11,8 +11,8 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun listItemEntityDao(): ListItemEntityDao
 
     companion object {
-        var instance: AppDatabase? = null
-        val databaseName = "list_db"
+        private var instance: AppDatabase? = null
+        private const val databaseName = "list_db"
 
         fun getAppDataBase(context: Context): AppDatabase?{
             if(instance == null){
