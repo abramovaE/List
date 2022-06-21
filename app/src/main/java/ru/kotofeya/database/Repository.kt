@@ -20,7 +20,20 @@ class Repository(appContext: Context) {
         db?.listItemEntityDao()?.insertListItemEntity(listItemEntity)
     }
 
+
     suspend fun addNewList(listEntity: ListEntity) = withContext(Dispatchers.IO){
         db?.listEntityDao()?.insertListEntity(listEntity)
+    }
+
+    suspend fun updateListItemEntity(listItemEntity: ListItemEntity) = withContext(Dispatchers.IO){
+        db?.listItemEntityDao()?.updateListItemEntity(listItemEntity)
+    }
+
+    suspend fun getListItemEntityById(id: Int) = withContext(Dispatchers.IO){
+        db?.listItemEntityDao()?.getListItemEntityById(id)
+    }
+
+    suspend fun removeAllListItemEntities() = withContext(Dispatchers.IO){
+        db?.listItemEntityDao()?.removeAllListItemEntities();
     }
 }

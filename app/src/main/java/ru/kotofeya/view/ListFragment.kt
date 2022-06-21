@@ -40,7 +40,8 @@ class ListFragment: Fragment(), ListChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dataModel = ViewModelProvider((activity as MainActivity), DataModel.Factory(activity as MainActivity)).get(
+        dataModel = ViewModelProvider((activity as MainActivity),
+            DataModel.Factory(activity as MainActivity)).get(
             DataModel::class.java)
         dataModel.getListItemEntities().observe(activity as LifecycleOwner, {
             listAdapter.updateList(it)
@@ -59,7 +60,7 @@ class ListFragment: Fragment(), ListChangeListener {
                     }
                     true
                 }
-                false
+                true
             }
 
             btnRec.setOnTouchListener(View.OnTouchListener{
@@ -110,5 +111,9 @@ class ListFragment: Fragment(), ListChangeListener {
 
     override fun onTextDelete(text: String) {
         dataModel.deleteListItemEntityByName(text)
+    }
+
+    override fun itemMove(fromPosition:Int, toPosition: Int) {
+        dataModel.updateList(fromPosition, toPosition)
     }
 }

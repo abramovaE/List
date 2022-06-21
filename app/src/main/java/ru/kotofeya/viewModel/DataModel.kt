@@ -1,6 +1,7 @@
 package ru.kotofeya.viewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,7 @@ import kotlinx.coroutines.withContext
 import ru.kotofeya.database.ListEntity
 import ru.kotofeya.database.ListItemEntity
 import ru.kotofeya.database.Repository
+import java.util.*
 
 open class DataModel(private val repo: Repository): ViewModel() {
 
@@ -25,6 +27,31 @@ open class DataModel(private val repo: Repository): ViewModel() {
         viewModelScope.launch(handler) {
             withContext(Dispatchers.IO) {
                 repo.deleteListItemEntityByName(name)
+            }
+            listItemEntities.postValue(repo.getAllListItemEntities());
+        }
+    }
+
+
+    fun updateList(fromPosition:Int, toPosition: Int){
+        viewModelScope.launch(handler) {
+            withContext(Dispatchers.IO) {
+                repo.removeAllListItemEntities()
+                val list = listItemEntities.value as MutableList
+                Collections.swap(list, fromPosition, toPosition)
+                list?.forEach { it ->
+                    it.id = null
+                    repo.insertListItemEntity(it)
+                }
+            }
+        }
+    }
+
+
+    fun getListItemEntityById(id: Int){
+        viewModelScope.launch(handler) {
+            withContext(Dispatchers.IO) {
+                repo.getListItemEntityById(id)
             }
         }
     }
@@ -51,6 +78,13 @@ open class DataModel(private val repo: Repository): ViewModel() {
         }
     }
 
+    fun updateListItem(listItemEntity: ListItemEntity){
+        viewModelScope.launch(handler){
+            withContext(Dispatchers.IO){
+                repo.updateListItemEntity(listItemEntity)
+            }
+        }
+    }
     fun insertNewListItemEntity(listItemEntity: ListItemEntity){
         viewModelScope.launch(handler){
             withContext(Dispatchers.IO){

@@ -58,6 +58,7 @@ class ListAdapter(private val listChangeListener: ListChangeListener) :
             }
         }
         notifyItemMoved(fromPosition, toPosition)
+        listChangeListener.itemMove(fromPosition, toPosition)
         return true
     }
 
